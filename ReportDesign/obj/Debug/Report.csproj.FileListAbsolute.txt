@@ -1,0 +1,12 @@
+C:\Users\chenjianping\Desktop\test\ReportDesign\obj\Debug\Report.csproj.ResolveComReference.cache
+C:\Users\chenjianping\Desktop\test\ReportDesign\obj\Debug\ReportDesign.exe
+C:\Users\chenjianping\Desktop\test\ReportDesign\obj\Debug\ReportDesign.pdb
+C:\Users\chenjianping\Desktop\test\ReportDesign\obj\Debug\Report.csprojResolveAssemblyReference.cache
+C:\Users\chenjianping\Desktop\test\ReportDesign\obj\Debug\ReportDesign.Form1.resources
+C:\Users\chenjianping\Desktop\test\ReportDesign\obj\Debug\ReportDesign.Properties.Resources.resources
+C:\Users\chenjianping\Desktop\test\ReportDesign\obj\Debug\Report.csproj.GenerateResource.Cache
+C:\Users\chenjianping\Desktop\test\ReportDesign\bin\Debug\ReportDesign.exe
+C:\Users\chenjianping\Desktop\test\ReportDesign\bin\Debug\ReportDesign.pdb
+C:\Users\chenjianping\Desktop\test\ReportDesign\bin\Debug\office.dll
+C:\Users\chenjianping\Desktop\test\ReportDesign\bin\Debug\Microsoft.Vbe.Interop.dll
+C:\Users\chenjianping\Desktop\test\ReportDesign\bin\Debug\office.xml

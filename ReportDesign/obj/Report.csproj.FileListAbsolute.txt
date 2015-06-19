@@ -1,0 +1,9 @@
+C:\Users\Administrator\Desktop\test\ReportDesign\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Administrator\Desktop\test\ReportDesign\obj\Debug\Report.csproj.ResolveComReference.cache
+C:\Users\Administrator\Desktop\test\ReportDesign\obj\Debug\ReportDesign.Properties.Resources.resources
+C:\Users\Administrator\Desktop\test\ReportDesign\obj\Debug\Report.csproj.GenerateResource.Cache
+C:\Users\Administrator\Desktop\test\ReportDesign\obj\Debug\ReportDesign.exe
+C:\Users\Administrator\Desktop\test\ReportDesign\bin\Debug\ReportDesign.exe
+C:\Users\Administrator\Desktop\test\ReportDesign\bin\Debug\ReportDesign.pdb
+C:\Users\Administrator\Desktop\test\ReportDesign\obj\Debug\ReportDesign.pdb
+C:\Users\Administrator\Desktop\test\ReportDesign\obj\Debug\ReportDesign.Form1.resources
