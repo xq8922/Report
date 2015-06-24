@@ -9,6 +9,18 @@ namespace ReportDesign
 {
     class AssistUtils
     {
+        public static bool DicHasKey(Dictionary<string, int> dic,string str)
+        {
+            foreach (KeyValuePair<string, int> pair in dic)
+            {
+                if (pair.Key.Equals(str))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static void showMessage(string message)
         {
             MessageBox.Show(message, "¾¯¸æ", MessageBoxButtons.OK, MessageBoxIcon.Warning);

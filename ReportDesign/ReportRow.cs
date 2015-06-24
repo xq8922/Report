@@ -20,4 +20,18 @@ namespace ReportDesign
             return other != null && other.name == this.name && other.year == this.year;
         }
     }
+    class CompanyWithoutYear
+    {
+        public string name = "";
+        public override int GetHashCode()
+        {
+            if (name == null) return 0;
+            return base.GetHashCode();
+        }
+        public override bool Equals(object obj)
+        {
+            CompanyWithoutYear other = (CompanyWithoutYear)obj;
+            return other != null && other.name == this.name;
+        }
+    }
 }

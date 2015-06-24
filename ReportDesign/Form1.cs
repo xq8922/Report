@@ -59,6 +59,7 @@ namespace ReportDesign
                         string paragraph = report.Document.Paragraphs[index++].Range.Text.Trim();
                         //对一行操作。提取作者，（段落第一个and之前，或者从开始到第一个逗号结束提取作者）查看集合是否存在该作者，存在则对应数量＋1；提取机构需要按照每一年份提取（分号之前逗号之后，或者最后一个逗号之后）,存在则+1
                         string paragraphAuthor = paragraph;
+                        string paragraphCompany = paragraph;
                         if (paragraph.Contains("年"))
                         {
                             year = paragraph.Substring(0, paragraph.IndexOf("年"));
@@ -83,11 +84,32 @@ namespace ReportDesign
                                 authorArr = Regex.Split(paragraphAuthor, ",");
                                 foreach (string s in authorArr)
                                 {
+                                    string[] strAuthor = Regex.Split(s, " and ");
+                                    if (strAuthor.Length > 1)
+                                    {
+                                        foreach (string a in strAuthor)
+                                        {
+                                            string author = a.Trim();
+                                            if (author.Length > 2)//过滤掉非法字符
+                                            {
+                                                if (authorDic.ContainsKey(author))
+                                                {
+                                                    authorDic[author]++;
+                                                }
+                                                else
+                                                {
+                                                    authorDic.Add(author, 1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    /*
                                     if (s.Contains("and "))
                                     {
                                         if (s.IndexOf("and ") < 3)
                                         {
-                                            string author = s.Substring(s.IndexOf("and ") + 3, s.Length - s.IndexOf("and ") - 3);
+                                            string author = "";
+                                            author = s.Substring(s.IndexOf("and ") + 3, s.Length - s.IndexOf("and ") - 3).Trim();
                                             int idx = author.IndexOf("、");
                                             if (idx != -1)
                                             {
@@ -125,7 +147,7 @@ namespace ReportDesign
                                                 }
                                             }
                                         }
-                                    }
+                                    }*/
                                 }
                             }
                             #endregion
@@ -138,17 +160,38 @@ namespace ReportDesign
                                     idx1 = str.LastIndexOf(",");
                                     if (idx1 != -1)
                                     {
-                                        string t = str.Substring(0, idx1);
+                                        string t = str.Substring(0, idx1).Trim();
                                         paragraphAuthor = t;
                                     }
                                     authorArr = Regex.Split(paragraphAuthor, ",");
                                     foreach (string s in authorArr)
                                     {
+                                        string[] strAuthorTemp = Regex.Split(s," and ");
+                                        if (strAuthorTemp.Length > 1)
+                                        {
+                                            foreach (string a in strAuthorTemp)
+                                            {
+                                                string author = a.Trim();
+                                                if (author.Length > 2)//过滤掉非法字符
+                                                {
+                                                    if (authorDic.ContainsKey(author))
+                                                    {
+                                                        authorDic[author]++;
+                                                    }
+                                                    else
+                                                    {
+                                                        authorDic.Add(author, 1);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        /*
                                         if (s.Contains("and "))
+                                        //if(s.IndexOf("and ") != -1)
                                         {
                                             if (s.IndexOf("and ") < 3)
                                             {
-                                                string author = s.Substring(s.IndexOf("and ") + 3, s.Length - s.IndexOf("and ") - 3);
+                                                string author = s.Substring(s.IndexOf("and ") + 3, s.Length - s.IndexOf("and ") - 3).Trim();
                                                 int idx = author.IndexOf("、");
                                                 if (idx != -1)
                                                 {
@@ -169,7 +212,7 @@ namespace ReportDesign
                                                 string[] strArrTemp = Regex.Split(s, "and ");
                                                 for (int i = 0; i < strArrTemp.Length; i++)
                                                 {
-                                                    string author = strArrTemp[i];
+                                                    string author = strArrTemp[i].Trim();
                                                     int idx = author.IndexOf("、");
                                                     if (idx != -1)
                                                     {
@@ -186,10 +229,10 @@ namespace ReportDesign
                                                     }
                                                 }
                                             }
-                                        }
+                                        }*/
                                         else
                                         {
-                                            string sAuthor = s;
+                                            string sAuthor = s.Trim();
                                             int idxT = sAuthor.IndexOf("、");
                                             if (idxT != -1)
                                             {
@@ -245,14 +288,14 @@ namespace ReportDesign
                         try
                         {//分两种情况：1有分号，则将字符串先分成几个Alex字符传输组根据分号，之后提取最后逗号之后的部分作为机构名称；2无分号，则
                             
-                            int idx1 = paragraph.IndexOf(";");
+                            int idx1 = paragraphCompany.IndexOf(";");
                             if (idx1 == -1)
                             {
-                                idx1 = paragraph.LastIndexOf(",");//Inc.
+                                idx1 = paragraphCompany.LastIndexOf(",");//Inc.
                                 Company c = new Company();
                                 c.year = year;
-                                c.name = paragraph.Substring(idx1 + 1, paragraph.Length - idx1 - 1).Trim();
-                                if (!c.name.Contains(" and"))
+                                c.name = paragraphCompany.Substring(idx1 + 1, paragraphCompany.Length - idx1 - 1).Trim();
+                                if (!c.name.Contains("and "))
                                 {
                                     if (companyDic.ContainsKey(c))
                                     {
@@ -267,7 +310,7 @@ namespace ReportDesign
                                 {
                                     Company c2 = new Company();
                                     Company c1 = new Company();
-                                    string[] strArr = Regex.Split(c.name, " and");
+                                    string[] strArr = Regex.Split(c.name, "and ");
                                     c2.name = strArr[1].Trim();
                                     c1.name = strArr[0].Trim();
                                     c1.year = year;
@@ -293,7 +336,7 @@ namespace ReportDesign
                             else
                             {
                                 List<string> list = new List<string>();   
-                                string[] arr = Regex.Split(paragraph, ";");
+                                string[] arr = Regex.Split(paragraphCompany, ";");
                                 //每一个字符串内部提取公司名称
                                 for (int i = 0; i < arr.Length;i ++ )
                                 {
@@ -301,15 +344,28 @@ namespace ReportDesign
                                     if (idx2 == -1)
                                         continue;
                                     string t = arr[i].Substring(idx2 + 1, arr[i].Length - idx2 - 1).Trim();
-                                    if (!list.Contains(t))
-                                        list.Add(t);
+                                    //if contains and
+                                    string[] strArr = Regex.Split(t, "and ");
+                                    if (strArr.Length > 1)
+                                    {
+                                        for (int x = 0; x < strArr.Length; x++)
+                                        {
+                                            if (!list.Contains(strArr[x]))
+                                                list.Add(strArr[x]);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!list.Contains(t))
+                                            list.Add(t);
+                                    }
                                 }
-                                
+                                Company company = null;
                                 for (int i = 0; i < list.Count; i++)
                                 { 
-                                    Company company = new Company();
+                                    company = new Company();
                                     company.year = year;
-                                    company.name = list[i];
+                                    company.name = list[i].Trim();
                                     if(companyDic.ContainsKey(company))
                                         companyDic[company]++;
                                     else
@@ -371,79 +427,89 @@ namespace ReportDesign
                 }
 
                 report.Application.Selection.TypeParagraph();
-
-                List<KeyValuePair<Company, int>> listCom = new List<KeyValuePair<Company, int>>(companyDic);
-                listCom.Sort(delegate(KeyValuePair<Company, int> c1, KeyValuePair<Company, int> c2)
+                Dictionary<Company, int> com1 = new Dictionary<Company, int>();
+                com1 = companyDic;
+                Dictionary<Company, int> com2 = new Dictionary<Company, int>();
+                com2 = companyDic;
+                #region  按照每年划分
+                if (comboBox1.Text.Trim().Equals("按照年份统计"))
                 {
-                    return String.Compare(c2.Key.year, c1.Key.year);//sort by year.
-                    //return c2.Value.CompareTo(c1.Value);
-                });
-                string y = "";                
-                int numOfYear = 0;
-                foreach (KeyValuePair<Company, int> pair in listCom)
-                {
-                    if (pair.Key.year != null && !y.Equals(pair.Key.year))
-                    {//
-                        numOfYear++;
+                    List<KeyValuePair<Company, int>> listCom = new List<KeyValuePair<Company, int>>(com1);
+                    listCom.Sort(delegate(KeyValuePair<Company, int> c1, KeyValuePair<Company, int> c2)
+                    {
+                        return String.Compare(c2.Key.year, c1.Key.year);//sort by year.
+                        //return c2.Value.CompareTo(c1.Value);
+                    });
+                    string y = "";
+                    int numOfYear = 0;
+                    foreach (KeyValuePair<Company, int> pair in listCom)
+                    {
+                        if (pair.Key.year != null && !y.Equals(pair.Key.year))
+                        {//
+                            numOfYear++;
+                            y = pair.Key.year;
+                        }
+                    }
+                    Dictionary<Company, int>[] dicYear = new Dictionary<Company, int>[numOfYear];
+                    int idxOfYear = 0;
+                    if (listCom.Count > 0)
+                        y = listCom[0].Key.year;
+                    else return;
+                    for (int i = 0; i < numOfYear; i++)
+                    {
+                        dicYear[i] = new Dictionary<Company, int>();
+                    }
+                    foreach (KeyValuePair<Company, int> pair in listCom)
+                    {
+                        if (pair.Key.year != null && y != pair.Key.year)
+                        {
+                            idxOfYear++;
+                            if (idxOfYear >= numOfYear)
+                                break;
+                        }
+                        dicYear[idxOfYear].Add(pair.Key, pair.Value);
                         y = pair.Key.year;
                     }
-                }
-                Dictionary<Company, int>[] dicYear = new Dictionary<Company, int>[numOfYear];
-                int idxOfYear = 0;
-                if (listCom.Count > 0)
-                    y = listCom[0].Key.year;
-                else return;
-                for (int i = 0; i < numOfYear; i++)
-                {
-                    dicYear[i] = new Dictionary<Company, int>();
-                }
-                foreach (KeyValuePair<Company, int> pair in listCom)
-                {
-                    if (pair.Key.year != null && y != pair.Key.year)
+                    for (int i = 0; i < dicYear.Length; i++)
                     {
-                        idxOfYear++;                        
-                        if (idxOfYear >= numOfYear)
-                            break;
-                    }                    
-                    dicYear[idxOfYear].Add(pair.Key, pair.Value);
-                    y = pair.Key.year;
-                }
-                for (int i = 0; i < dicYear.Length; i++)
-                {
-                    //sort by count
-                    List<KeyValuePair<Company, int>> lTemp = new List<KeyValuePair<Company, int>>(dicYear[i]);
-                    lTemp.Sort(delegate(KeyValuePair<Company, int> v1, KeyValuePair<Company, int> v2)
-                    {
-                        return v2.Value.CompareTo(v1.Value);
-                    });
-                    if (comboBox1.Text.Trim().Equals("按照年份统计"))
-                    {
-                        report.Application.Selection.TypeText("year:" + lTemp[0].Key.year);
-                        report.Application.Selection.TypeParagraph();
-                        foreach (KeyValuePair<Company, int> pair in lTemp)
+                        //sort by count
+                        List<KeyValuePair<Company, int>> lTemp = new List<KeyValuePair<Company, int>>(dicYear[i]);
+                        lTemp.Sort(delegate(KeyValuePair<Company, int> v1, KeyValuePair<Company, int> v2)
                         {
-                            if (!pair.Key.name.Equals(""))
+                            return v2.Value.CompareTo(v1.Value);
+                        });
+                        if (comboBox1.Text.Trim().Equals("按照年份统计"))
+                        {
+                            report.Application.Selection.TypeText("year:" + lTemp[0].Key.year);
+                            report.Application.Selection.TypeParagraph();
+                            foreach (KeyValuePair<Company, int> pair in lTemp)
                             {
-                                report.Application.Selection.TypeText("company:" + pair.Key.name + "      出现次数:" + pair.Value);
-                                report.Application.Selection.TypeParagraph();
+                                if (!pair.Key.name.Equals(""))
+                                {
+                                    report.Application.Selection.TypeText("company:" + pair.Key.name + "      出现次数:" + pair.Value);
+                                    report.Application.Selection.TypeParagraph();
+                                }
                             }
+                            report.Application.Selection.TypeParagraph();
                         }
-                        report.Application.Selection.TypeParagraph();
                     }
                 }
+                #endregion
+                #region 按照整体划分
                 if (comboBox1.Text.Equals("按照总体统计"))
                 {
-                    Dictionary<string,int> dicTemp = new Dictionary<string,int >();
-                    foreach (KeyValuePair<Company, int> pair in companyDic)
-                    {
+                    Dictionary<string, int> dicTemp = new Dictionary<string, int>();
+                    foreach(KeyValuePair<Company,int> pair in com2)
+                    {   
                         string str = pair.Key.name;
-                        if (!dicTemp.ContainsKey(str))
+                        //检测是否有这个string没有添加，有则加1
+                        if (AssistUtils.DicHasKey(dicTemp, str))
                         {
-                            dicTemp.Add(str, 1);
+                            dicTemp[str] += pair.Value;
                         }
                         else
                         {
-                            dicTemp[str]++;
+                            dicTemp.Add(str, 1);
                         }
                     }
                     List<KeyValuePair<string, int>> list_CompanyTotal = new List<KeyValuePair<string, int>>(dicTemp);
@@ -460,13 +526,14 @@ namespace ReportDesign
                         }
                     }
                 }
-                
+                #endregion
+
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Title = "请输入文件名";
                 saveFileDialog.Filter = "word文档(*.doc)|*.doc|word文档(*.docx)|*.docx";
                 saveFileDialog.FilterIndex = 1;
                 saveFileDialog.RestoreDirectory = true;
-                saveFileDialog.FileName = "result";
+                saveFileDialog.FileName = comboBox1.Text;
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     try
